@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1. Sınıf Ders Programı — KTÜ Bilgisayar Bilimleri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1F2430;
+    --ink-soft:#666E80;
+    --accent:#3E6FF0;
+    --now:#2E9A6B;
+    --glass:rgba(255,255,255,.55);
+    --glass-strong:rgba(255,255,255,.75);
+    --glass-border:rgba(255,255,255,.85);
+    font-size:17px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;min-height:100%;}
+  body{
+    color:var(--ink);
+    font-family:"Nunito","Helvetica Neue",Arial,sans-serif;
+    line-height:1.55;
+    padding-bottom:4rem;
+    background:linear-gradient(160deg, #EEF2F8 0%, #E7ECF4 45%, #EEF3F1 100%);
+    background-attachment:fixed;
+    position:relative;
+    overflow-x:hidden;
+  }
+  .blob{
+    position:fixed;
+    border-radius:50%;
+    background:rgba(255,255,255,.55);
+    filter:blur(60px);
+    z-index:0;
+    pointer-events:none;
+  }
+  .blob-a{width:420px;height:420px;top:-140px;left:-120px;}
+  .blob-b{width:380px;height:380px;bottom:-160px;right:-100px;}
+  .blob-c{width:320px;height:320px;top:40%;right:-140px;}
+
+  .wrap{
+    max-width:920px;
+    margin:0 auto;
+    padding:2.5rem 1.25rem 0;
+    position:relative;
+    z-index:1;
+  }
+
+  .glass{
+    position:relative;
+    border:1px solid rgba(255,255,255,.55) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.55),
+      inset 0 -1px 10px rgba(255,255,255,.06),
+      0 10px 34px rgba(20,10,60,.16) !important;
+  }
+  .glass::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:inherit;
+    background:linear-gradient(180deg, rgba(255,255,255,.22) 0%, rgba(255,255,255,0) 32%);
+    pointer-events:none;
+  }
+  header{
+    background:var(--glass);
+    backdrop-filter:blur(22px) saturate(160%);
+    -webkit-backdrop-filter:blur(22px) saturate(160%);
+    border-radius:26px;
+    padding:1.5rem 1.75rem;
+    margin-bottom:1.75rem;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:1rem;
+    flex-wrap:wrap;
+  }
+  header h1{
+    font-family:"Quicksand",sans-serif;
+    font-size:1.6rem;
+    margin:0 0 .3rem;
+    font-weight:700;
+    letter-spacing:-.01em;
+  }
+  header p{
+    margin:0;
+    font-size:.85rem;
+    color:var(--ink-soft);
+    font-weight:600;
+  }
+  #clock{
+    text-align:right;
+    font-size:.85rem;
+    color:var(--ink-soft);
+    font-weight:600;
+  }
+  #clock strong{
+    display:block;
+    font-family:"Quicksand",sans-serif;
+    font-size:1.5rem;
+    color:var(--ink);
+    font-weight:700;
+    letter-spacing:.01em;
+  }
+
+  .today-box{
+    background:rgba(255,255,255,.55);
+    backdrop-filter:blur(24px) saturate(140%);
+    -webkit-backdrop-filter:blur(24px) saturate(140%);
+    border:1px solid rgba(255,255,255,.5);
+    border-radius:28px;
+    padding:1.9rem 1.9rem 1.6rem;
+    margin-bottom:2.25rem;
+    color:var(--ink);
+    box-shadow:0 12px 34px rgba(60,80,140,.12);
+  }
+  .today-box h2{
+    font-family:"Quicksand",sans-serif;
+    font-size:.78rem;
+    letter-spacing:.1em;
+    color:var(--accent);
+    margin:0 0 .35rem;
+    font-weight:700;
+  }
+  .today-box .daytitle{
+    font-family:"Quicksand",sans-serif;
+    font-size:1.85rem;
+    font-weight:700;
+    margin:0 0 1.15rem;
+  }
+  .today-list{
+    list-style:none;
+    margin:0;
+    padding:0;
+    display:flex;
+    flex-direction:column;
+    gap:.65rem;
+  }
+  .today-list li{
+    display:flex;
+    gap:1rem;
+    align-items:baseline;
+    padding:.75rem .95rem;
+    border-radius:18px;
+    background:rgba(255,255,255,.5);
+    border:1px solid rgba(255,255,255,.7);
+    color:var(--ink);
+  }
+  .today-list li.active{
+    background:var(--accent);
+    color:#fff;
+    font-weight:700;
+    box-shadow:0 6px 18px rgba(62,111,240,.3);
+  }
+  .today-list li.active .meta{color:rgba(255,255,255,.85);}
+  .today-list .time{
+    font-size:.85rem;
+    min-width:5.4rem;
+    flex-shrink:0;
+    opacity:.7;
+    font-weight:700;
+  }
+  .today-list li.active .time{opacity:.95;}
+  .today-list .course{
+    font-size:1rem;
+    font-weight:600;
+  }
+  .today-list .course .meta{
+    display:block;
+    font-size:.78rem;
+    color:var(--ink-soft);
+    margin-top:.15rem;
+    font-weight:500;
+  }
+  .today-empty{
+    color:var(--ink-soft);
+    font-size:.95rem;
+    font-weight:600;
+  }
+  .now-tag{
+    font-family:"Quicksand",sans-serif;
+    font-size:.68rem;
+    letter-spacing:.06em;
+    background:#fff;
+    color:var(--accent);
+    padding:.2rem .55rem;
+    border-radius:999px;
+    margin-left:auto;
+    font-weight:700;
+  }
+
+  h3.section-title{
+    font-family:"Quicksand",sans-serif;
+    font-size:.8rem;
+    letter-spacing:.06em;
+    color:var(--ink-soft);
+    margin:0 0 1.1rem 0.5rem;
+    font-weight:700;
+  }
+
+  .table-scroll{
+    overflow-x:auto;
+    margin-bottom:2rem;
+    -webkit-overflow-scrolling:touch;
+    background:var(--glass);
+    backdrop-filter:blur(20px) saturate(150%);
+    -webkit-backdrop-filter:blur(20px) saturate(150%);
+    border:1px solid var(--glass-border);
+    border-radius:26px;
+    padding:.5rem;
+    box-shadow:0 8px 26px rgba(60,80,140,.1);
+  }
+  table{
+    width:100%;
+    border-collapse:separate;
+    border-spacing:0 6px;
+    min-width:600px;
+  }
+  thead th{
+    text-align:left;
+    font-family:"Quicksand",sans-serif;
+    font-size:.72rem;
+    letter-spacing:.05em;
+    color:var(--ink-soft);
+    font-weight:700;
+    padding:.4rem .9rem;
+  }
+  tbody td{
+    vertical-align:top;
+    padding:.7rem .9rem;
+    font-size:.92rem;
+    background:rgba(255,255,255,.45);
+  }
+  tbody tr td:first-child{border-radius:14px 0 0 14px;}
+  tbody tr td:last-child{border-radius:0 14px 14px 0;}
+  td.time-col{
+    font-size:.8rem;
+    color:var(--ink-soft);
+    white-space:nowrap;
+    width:7rem;
+    font-weight:700;
+  }
+  td.day-col{
+    font-weight:800;
+    white-space:nowrap;
+    font-family:"Quicksand",sans-serif;
+  }
+  tr.today-row td{background:rgba(62,111,240,.08);}
+  .course-name{display:block;font-weight:700;}
+  .course-meta{
+    display:block;
+    font-size:.76rem;
+    color:var(--ink-soft);
+    margin-top:.15rem;
+    font-weight:500;
+  }
+  .online-tag{
+    font-size:.68rem;
+    color:#c76ba0;
+    font-weight:700;
+  }
+
+  footer{
+    font-size:.75rem;
+    color:var(--ink-soft);
+    text-align:center;
+    margin-top:2rem;
+    opacity:.8;
+    font-weight:600;
+  }
+
+  @media (max-width:560px){
+    :root{font-size:15.5px;}
+    header{flex-direction:column;align-items:flex-start;}
+    #clock{text-align:left;}
+    .today-box{padding:1.5rem 1.25rem;}
+    .blob{filter:blur(50px);}
+  }
+</style>
+</head>
+<body>
+<div class="blob blob-a"></div>
+<div class="blob blob-b"></div>
+<div class="blob blob-c"></div>
+<div class="wrap">
+
+  <header class="glass">
+    <div>
+      <h1>Ders Programı</h1>
+      <p>Bilgisayar Bilimleri Bölümü · 1. Sınıf · 2026/2027 Bahar Yarıyılı</p>
+    </div>
+    <div id="clock"><strong id="clock-time">--:--</strong><span id="clock-date">Trabzon</span></div>
+  </header>
+
+  <section class="today-box glass" id="today-box">
+    <h2 id="today-label">BUGÜN</h2>
+    <div class="daytitle" id="today-day">—</div>
+    <ul class="today-list" id="today-list"></ul>
+  </section>
+
+  <h3 class="section-title">HAFTALIK PROGRAM</h3>
+  <div class="table-scroll glass">
+    <table>
+      <thead>
+        <tr><th>Gün</th><th>Saat</th><th>Ders</th></tr>
+      </thead>
+      <tbody id="week-body"></tbody>
+    </table>
+  </div>
+
+  <footer>Karadeniz Teknik Üniversitesi Fen Fakültesi resmi ders programı belgesinden alınmıştır (Rev. 30.07.2026) · Saatler Türkiye/Trabzon saat dilimine göre hesaplanır</footer>
+</div>
+
+<script>
+const SCHEDULE = {
+  "Pazartesi": [
+    {s:"10:00", e:"12:00", code:"BILB1003", name:"Olasılığa Giriş", instr:"Z. Küçük", room:"D-201"},
+    {s:"15:00", e:"17:00", code:"MAT1009", name:"Matematik - I", instr:"P. İ. Al", room:"D-201"},
+  ],
+  "Salı": [
+    {s:"10:00", e:"12:00", code:"MAT1009", name:"Matematik - I", instr:"P. İ. Al", room:"D-201"},
+    {s:"13:00", e:"15:00", code:"MAT1009", name:"Matematik - I", instr:"P. İ. Al", room:"D-201"},
+  ],
+  "Çarşamba": [
+    {s:"08:00", e:"10:00", code:"BILB1001", name:"Bilgisayar Bilimlerine Giriş", instr:"E. Özkul", room:"D-201"},
+    {s:"10:00", e:"12:00", code:"BILB1003", name:"Olasılığa Giriş", instr:"Z. Küçük", room:"D-201"},
+  ],
+  "Perşembe": [
+    {s:"08:00", e:"10:00", code:"BILB1001", name:"Bilgisayar Bilimlerine Giriş", instr:"E. Özkul", room:"D-201"},
+    {s:"13:00", e:"15:00", code:"BILB1005", name:"Temel Bilgisayar Teknolojileri (B Grubu)", instr:"H. İ. Şahin", room:"D-204"},
+    {s:"15:00", e:"17:00", code:"YDB1001", name:"İngilizce - I", instr:"Ö. Gürsoy", room:"D-202"},
+  ],
+  "Cuma": [
+    {s:"13:00", e:"15:00", code:"AITB1001", name:"Atatürk İlkeleri ve İnkılap Tarihi - I", instr:"U. Üçüncü", room:null, online:true},
+    {s:"15:00", e:"17:00", code:"TDB1001", name:"Türk Dili - I", instr:"A. Kılıçoğlu", room:null, online:true},
+  ],
+  "Cumartesi": [],
+  "Pazar": [],
+};
+
+const DAY_ORDER = ["Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi","Pazar"];
+const JS_DAY_TO_TR = {0:"Pazar",1:"Pazartesi",2:"Salı",3:"Çarşamba",4:"Perşembe",5:"Cuma",6:"Cumartesi"};
+const TZ = "Europe/Istanbul";
+
+function getIstanbulParts(){
+  const fmt = new Intl.DateTimeFormat("en-US", {
+    timeZone: TZ, weekday:"short", hour:"2-digit", minute:"2-digit", hour12:false
+  });
+  const parts = fmt.formatToParts(new Date());
+  const map = {};
+  parts.forEach(p => map[p.type] = p.value);
+  const weekdayIdx = {"Sun":0,"Mon":1,"Tue":2,"Wed":3,"Thu":4,"Fri":5,"Sat":6}[map.weekday];
+  let hour = parseInt(map.hour, 10);
+  if (hour === 24) hour = 0;
+  const minutes = hour*60 + parseInt(map.minute,10);
+  return { day: JS_DAY_TO_TR[weekdayIdx], hh: map.hour, mm: map.minute, minutesOfDay: minutes };
+}
+
+function toMinutes(hhmm){
+  const [h,m] = hhmm.split(":").map(Number);
+  return h*60+m;
+}
+
+function renderClock(){
+  const { day, hh, mm } = getIstanbulParts();
+  document.getElementById("clock-time").textContent = `${hh}:${mm}`;
+  document.getElementById("clock-date").textContent = `${day} · Trabzon (TRT)`;
+}
+
+function courseMeta(c){
+  if (c.online) return `${c.instr} · Uzaktan (UZEM)`;
+  return `${c.instr} · ${c.room}`;
+}
+
+function renderToday(){
+  const { day, minutesOfDay } = getIstanbulParts();
+  document.getElementById("today-day").textContent = day;
+  const list = document.getElementById("today-list");
+  list.innerHTML = "";
+
+  const courses = SCHEDULE[day] || [];
+  if (courses.length === 0){
+    const li = document.createElement("li");
+    li.className = "today-empty";
+    li.style.display = "block";
+    li.textContent = "Bugün 1. sınıf için ders yok.";
+    list.appendChild(li);
+    return;
+  }
+
+  courses.forEach(c => {
+    const start = toMinutes(c.s), end = toMinutes(c.e);
+    const isNow = minutesOfDay >= start && minutesOfDay < end;
+    const li = document.createElement("li");
+    li.className = isNow ? "active" : "";
+    li.innerHTML = `
+      <span class="time">${c.s}–${c.e}</span>
+      <span class="course">${c.name}
+        <span class="meta">${c.code} · ${courseMeta(c)}</span>
+      </span>
+      ${isNow ? '<span class="now-tag">ŞİMDİ</span>' : ''}
+    `;
+    list.appendChild(li);
+  });
+}
+
+function renderWeek(){
+  const { day: today } = getIstanbulParts();
+  const body = document.getElementById("week-body");
+  body.innerHTML = "";
+
+  DAY_ORDER.forEach(day => {
+    const courses = SCHEDULE[day];
+    if (!courses || courses.length === 0){
+      const tr = document.createElement("tr");
+      if (day === today) tr.className = "today-row";
+      tr.innerHTML = `<td class="day-col">${day}</td><td class="time-col">—</td><td>Ders yok</td>`;
+      body.appendChild(tr);
+      return;
+    }
+    courses.forEach((c, i) => {
+      const tr = document.createElement("tr");
+      if (day === today) tr.className = "today-row";
+      tr.innerHTML = `
+        <td class="day-col">${i === 0 ? day : ""}</td>
+        <td class="time-col">${c.s}–${c.e}</td>
+        <td>
+          <span class="course-name">${c.name}</span>
+          <span class="course-meta">${c.code} · ${courseMeta(c)}${c.online ? ' <span class="online-tag">(çevrimiçi)</span>' : ''}</span>
+        </td>
+      `;
+      body.appendChild(tr);
+    });
+  });
+}
+
+function renderAll(){
+  renderClock();
+  renderToday();
+  renderWeek();
+}
+
+renderAll();
+setInterval(renderAll, 30000);
+</script>
+</body>
+</html>
